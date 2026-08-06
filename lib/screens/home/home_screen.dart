@@ -22,35 +22,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   static const double _blockHeight = 20.0;
   static const double _hourHeight = _blockHeight * 4;
 
-  late ScrollController _scrollController;
+  late PageController _pageController;
+  static const int _initialPage = 500; // middle point for infinite scroll
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
-    // Scroll to current time on load
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToNow();
-    });
+    _pageController = PageController(initialPage: _initialPage);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _pageController.dispose();
     super.dispose();
-  }
-
-  void _scrollToNow() {
-    final now = DateTime.now();
-    final hourOffset = now.hour - _startHour;
-    if (hourOffset > 0) {
-      final targetScroll = (hourOffset - 2) * _hourHeight;
-      _scrollController.animateTo(
-        targetScroll.clamp(0, _scrollController.position.maxScrollExtent),
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
   }
 
   @override
@@ -77,24 +61,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ],
       ),
-      body: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity == null) return;
-          if (details.primaryVelocity! > 300) {
-            _changeDay(-1); // swipe right = previous day
-          } else if (details.primaryVelocity! < -300) {
-            _changeDay(1); // swipe left = next day
-          }
+      body: PageView.builder(
+        controller: _pageController,
+        onPageChanged: (page) {
+          final offset = page - _initialPage;
+          final today = DateTime.now();
+          final baseDate = DateTime(today.year, today.month, today.day);
+          ref.read(selectedDateProvider.notifier).state =
+              baseDate.add(Duration(days: offset));
         },
-        child: _buildDayCalendar(transactions, categories),
+        itemBuilder: (context, index) {
+          return _buildDayCalendar(transactions, categories);
+        },
       ),
     );
   }
 
   void _changeDay(int offset) {
-    final current = ref.read(selectedDateProvider);
-    ref.read(selectedDateProvider.notifier).state =
-        current.add(Duration(days: offset));
+    final newPage = _pageController.page!.round() + offset;
+    _pageController.animateToPage(
+      newPage,
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeInOut,
+    );
   }
 
   Future<void> _pickDate(DateTime current) async {
@@ -105,6 +94,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       lastDate: DateTime.now().add(const Duration(days: 1)),
     );
     if (picked != null) {
+      final today = DateTime.now();
+      final baseDate = DateTime(today.year, today.month, today.day);
+      final offset = picked.difference(baseDate).inDays;
+      _pageController.jumpToPage(_initialPage + offset);
       ref.read(selectedDateProvider.notifier).state = picked;
     }
   }
@@ -247,9 +240,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   ) {
     final totalHours = _endHour - _startHour;
 
-    return SingleChildScrollView(
-      controller: _scrollController,
-      padding: const EdgeInsets.only(bottom: 80),
+    return _AutoScrollToNow(
+      startHour: _startHour,
+      hourHeight: _hourHeight,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -519,6 +512,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         initialBlocks: t.blocks,
         initialNote: t.note,
         isEditing: true,
+        onManageCategories: () {
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const CategoriesScreen()),
+          );
+        },
         onSave: (categoryId, blocks, note) {
           t.categoryId = categoryId;
           t.blocks = blocks;
@@ -817,6 +817,61 @@ class _LogTimeSheetState extends State<_LogTimeSheet> {
           ),
         ],
       ),
+    );
+  }
+}
+
+
+/// A widget that wraps content in a ScrollView and auto-scrolls to current time
+class _AutoScrollToNow extends StatefulWidget {
+  final int startHour;
+  final double hourHeight;
+  final Widget child;
+
+  const _AutoScrollToNow({
+    required this.startHour,
+    required this.hourHeight,
+    required this.child,
+  });
+
+  @override
+  State<_AutoScrollToNow> createState() => _AutoScrollToNowState();
+}
+
+class _AutoScrollToNowState extends State<_AutoScrollToNow> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToNow();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _scrollToNow() {
+    final now = DateTime.now();
+    final hourOffset = now.hour - widget.startHour;
+    if (hourOffset > 0 && _controller.hasClients) {
+      final targetScroll = (hourOffset - 2) * widget.hourHeight;
+      _controller.jumpTo(
+        targetScroll.clamp(0.0, _controller.position.maxScrollExtent),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      controller: _controller,
+      padding: const EdgeInsets.only(bottom: 80),
+      child: widget.child,
     );
   }
 }
