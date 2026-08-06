@@ -53,14 +53,14 @@ class CategoryRepository {
     if (_box.isNotEmpty) return;
 
     final defaults = [
-      ('Deep Work', 0xFF1565C0),
-      ('Exercise', 0xFF2E7D32),
-      ('Reading', 0xFF6A1B9A),
-      ('Social', 0xFFE65100),
-      ('Rest', 0xFF00838F),
-      ('Scrolling', 0xFFAD1457),
-      ('Meals', 0xFF4E342E),
-      ('Chores', 0xFF546E7A),
+      ('Deep Work', 0xFF42A5F5),
+      ('Exercise', 0xFF66BB6A),
+      ('Reading', 0xFFAB47BC),
+      ('Social', 0xFFFF7043),
+      ('Rest', 0xFF26C6DA),
+      ('Scrolling', 0xFFEC407A),
+      ('Meals', 0xFFA1887F),
+      ('Chores', 0xFF78909C),
     ];
 
     for (final (name, color) in defaults) {

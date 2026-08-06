@@ -98,16 +98,20 @@ class _AddCategoryDialogState extends State<_AddCategoryDialog> {
   late int _selectedColor;
 
   static const _colorOptions = [
-    0xFF1565C0, // blue
-    0xFF2E7D32, // green
-    0xFF6A1B9A, // purple
-    0xFFE65100, // orange
-    0xFF00838F, // teal
-    0xFFAD1457, // pink
-    0xFF4E342E, // brown
-    0xFF546E7A, // grey
-    0xFFC62828, // red
-    0xFF283593, // indigo
+    0xFF42A5F5, // bright blue
+    0xFF66BB6A, // bright green
+    0xFFAB47BC, // bright purple
+    0xFFFF7043, // bright orange
+    0xFF26C6DA, // bright teal
+    0xFFEC407A, // bright pink
+    0xFFA1887F, // warm brown
+    0xFF78909C, // blue grey
+    0xFFEF5350, // bright red
+    0xFF5C6BC0, // bright indigo
+    0xFFFFCA28, // gold
+    0xFF26A69A, // emerald
+    0xFFFF8A65, // coral
+    0xFF7E57C2, // violet
   ];
 
   @override

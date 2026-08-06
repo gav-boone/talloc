@@ -24,6 +24,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   late PageController _pageController;
   static const int _initialPage = 500; // middle point for infinite scroll
+  double _scrollOffset = -1; // -1 means "scroll to now on first build"
 
   @override
   void initState() {
@@ -71,7 +72,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               baseDate.add(Duration(days: offset));
         },
         itemBuilder: (context, index) {
-          return _buildDayCalendar(transactions, categories);
+          final offset = index - _initialPage;
+          final today = DateTime.now();
+          final baseDate = DateTime(today.year, today.month, today.day);
+          final pageDate = baseDate.add(Duration(days: offset));
+          final repo = ref.read(transactionRepositoryProvider);
+          final pageTransactions = repo.getForDate(pageDate);
+          return _buildDayCalendar(pageTransactions, categories, pageDate);
         },
       ),
     );
@@ -237,12 +244,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildDayCalendar(
     List<TimeTransaction> transactions,
     List<CategoryModel> categories,
+    DateTime pageDate,
   ) {
     final totalHours = _endHour - _startHour;
 
-    return _AutoScrollToNow(
+    return _SharedScrollView(
+      initialOffset: _scrollOffset,
       startHour: _startHour,
       hourHeight: _hourHeight,
+      onScrollChanged: (offset) => _scrollOffset = offset,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -291,9 +301,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         decoration: BoxDecoration(
                           border: Border(
                             top: isHourLine
-                                ? BorderSide(color: Colors.grey[300]!)
+                                ? BorderSide(color: Colors.grey[500]!)
                                 : BorderSide(
-                                    color: Colors.grey[200]!,
+                                    color: Colors.grey[700]!,
                                     width: 0.5,
                                   ),
                           ),
@@ -304,7 +314,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
 
                 // Current time indicator
-                _buildNowIndicator(),
+                _buildNowIndicator(pageDate),
 
                 // Sleep indicator
                 _buildSleepIndicator(),
@@ -319,8 +329,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildNowIndicator() {
+  Widget _buildNowIndicator(DateTime pageDate) {
+    // Only show on today
     final now = DateTime.now();
+    if (pageDate.year != now.year ||
+        pageDate.month != now.month ||
+        pageDate.day != now.day) {
+      return const SizedBox.shrink();
+    }
+
     final minutesSinceStart = (now.hour - _startHour) * 60 + now.minute;
     if (minutesSinceStart < 0 || minutesSinceStart > (_endHour - _startHour) * 60) {
       return const SizedBox.shrink();
@@ -413,8 +430,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onTap: () => _onTransactionTap(t, category),
           onLongPress: () => _onTransactionLongPress(t, category),
           child: Container(
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              color: Color(category.colorValue).withOpacity(0.85),
+              color: Color(category.colorValue),
               borderRadius: BorderRadius.circular(4),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -431,7 +449,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (t.note != null && t.note!.isNotEmpty)
+                if (t.note != null && t.note!.isNotEmpty && t.blocks > 1)
                   Text(
                     t.note!,
                     style: TextStyle(
@@ -822,48 +840,58 @@ class _LogTimeSheetState extends State<_LogTimeSheet> {
 }
 
 
-/// A widget that wraps content in a ScrollView and auto-scrolls to current time
-class _AutoScrollToNow extends StatefulWidget {
+/// A widget that preserves scroll position across page swipes.
+/// On first open, scrolls to current time. After that, maintains position.
+class _SharedScrollView extends StatefulWidget {
+  final double initialOffset; // -1 means "scroll to now"
   final int startHour;
   final double hourHeight;
+  final ValueChanged<double> onScrollChanged;
   final Widget child;
 
-  const _AutoScrollToNow({
+  const _SharedScrollView({
+    required this.initialOffset,
     required this.startHour,
     required this.hourHeight,
+    required this.onScrollChanged,
     required this.child,
   });
 
   @override
-  State<_AutoScrollToNow> createState() => _AutoScrollToNowState();
+  State<_SharedScrollView> createState() => _SharedScrollViewState();
 }
 
-class _AutoScrollToNowState extends State<_AutoScrollToNow> {
-  final ScrollController _controller = ScrollController();
+class _SharedScrollViewState extends State<_SharedScrollView> {
+  late ScrollController _controller;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToNow();
-    });
+    double initial = 0;
+    if (widget.initialOffset < 0) {
+      // First open: calculate scroll to now
+      final now = DateTime.now();
+      final hourOffset = now.hour - widget.startHour;
+      if (hourOffset > 0) {
+        initial = (hourOffset - 2) * widget.hourHeight;
+        if (initial < 0) initial = 0;
+      }
+    } else {
+      initial = widget.initialOffset;
+    }
+    _controller = ScrollController(initialScrollOffset: initial);
+    _controller.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    widget.onScrollChanged(_controller.offset);
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onScroll);
     _controller.dispose();
     super.dispose();
-  }
-
-  void _scrollToNow() {
-    final now = DateTime.now();
-    final hourOffset = now.hour - widget.startHour;
-    if (hourOffset > 0 && _controller.hasClients) {
-      final targetScroll = (hourOffset - 2) * widget.hourHeight;
-      _controller.jumpTo(
-        targetScroll.clamp(0.0, _controller.position.maxScrollExtent),
-      );
-    }
   }
 
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:talloc/core/constants.dart';
 import 'package:talloc/core/theme.dart';
-import 'package:talloc/screens/home/home_screen.dart';
+import 'package:talloc/screens/main_shell.dart';
 
 class TallocApp extends StatelessWidget {
   const TallocApp({super.key});
@@ -11,7 +11,7 @@ class TallocApp extends StatelessWidget {
     return MaterialApp(
       title: appName,
       theme: appTheme(),
-      home: const HomeScreen(),
+      home: const MainShell(),
       debugShowCheckedModeBanner: false,
     );
   }
