@@ -1,15 +1,29 @@
-class Transaction {
-  final int id;
-  final DateTime startTime;
-  final int blocks;
-  final String categoryId;
-  final String description;
+import 'package:hive/hive.dart';
 
-  const Transaction({
-    this.id = 0,
+part 'transaction.g.dart';
+
+@HiveType(typeId: 1)
+class TimeTransaction extends HiveObject {
+  @HiveField(0)
+  late String id;
+
+  @HiveField(1)
+  late DateTime startTime;
+
+  @HiveField(2)
+  late int blocks;
+
+  @HiveField(3)
+  late String categoryId;
+
+  @HiveField(4)
+  late String? note;
+
+  TimeTransaction({
+    required this.id,
     required this.startTime,
     required this.blocks,
     required this.categoryId,
-    required this.description,
+    this.note,
   });
 }

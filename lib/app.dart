@@ -1,4 +1,3 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:talloc/core/constants.dart';
 import 'package:talloc/core/theme.dart';
@@ -13,8 +12,7 @@ class TallocApp extends StatelessWidget {
       title: appName,
       theme: appTheme(),
       home: const HomeScreen(),
-      locale: DevicePreview.locale(context),
-      builder: DevicePreview.appBuilder,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
