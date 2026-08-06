@@ -13,30 +13,37 @@ Just like a bank account, you have a finite balance of time each day. Talloc hel
 - **Goals** — Set daily/weekly targets (min/max per category)
 - **Balance** — See the gap between intention and reality
 
-## Platforms
+## Platform
 
-| Platform | Status |
-|----------|--------|
-| iPhone | Primary target |
-| Windows desktop | Secondary |
-| Linux Mint | Stretch goal |
+Talloc is a **Progressive Web App (PWA)** hosted on GitHub Pages. It works on any device with a modern browser.
+
+| Platform | How to use |
+|----------|-----------|
+| **iPhone** | Open in Safari → "Add to Home Screen" → runs like a native app |
+| **Android** | Open in Chrome → "Install app" prompt |
+| **Desktop** | Open in any browser, or install as a desktop app via Chrome/Edge |
+
+**Live app:** [https://gav-boone.github.io/talloc/](https://gav-boone.github.io/talloc/)
+
+### PWA Features
+- Fullscreen (no browser chrome) when launched from home screen
+- Offline support — works without internet after first load
+- Local data storage — all data stays on your device
+- Auto-updates on next visit when new code is deployed
 
 ## Tech Stack
 
-- **Flutter** — cross-platform UI framework
+- **Flutter** — UI framework (compiled to web)
 - **Dart** — application language
-- **Isar** — local NoSQL database
+- **Hive** — local storage (browser IndexedDB)
 - **Riverpod** — state management
-- **GoRouter** — navigation/routing
+- **GitHub Pages** — free static hosting
 
 ## Getting Started
 
 ### Prerequisites
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.x+)
-- For iOS: Xcode + CocoaPods (macOS required)
-- For Windows: Visual Studio with C++ desktop workload
-- For Linux: Standard Flutter Linux dependencies
 
 ### Run locally
 
@@ -48,13 +55,23 @@ cd talloc
 # Get dependencies
 flutter pub get
 
-# Run
-flutter run
+# Run in Chrome
+flutter run -d chrome
+```
+
+### Deploy
+
+```bash
+# Build for web
+flutter build web --release --base-href "/talloc/"
+
+# Deploy to GitHub Pages (pushes to gh-pages branch)
+# See IMPLEMENTATION_GUIDE.md for full deployment steps
 ```
 
 ## Project Status
 
-🚧 **In development** — Learning project for Flutter/mobile development.
+🚧 **In development** — Learning project for Flutter/web development.
 
 See [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) for the full build plan.
 
