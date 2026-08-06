@@ -94871,10 +94871,10 @@ return r.bp(0,s)},
 $S:585}
 A.LF.prototype={
 H(a){var s=null
-return A.Dm(A.L7(s,s,s,B.Vv),B.D_,s,s)}}
+return A.Dm(A.L7(s,s,s,B.Vv),B.CZ,s,s)}}
 A.uh.prototype={
 lU(a,b){var s=null,r=b.jB($.ps(),t.Yw),q=A.L7(s,s,s,B.Vk),p=J.aE(r)
-if(p.ga7(r))p=B.CZ
+if(p.ga7(r))p=B.D_
 else{p=p.gC(r)
 p=new A.OQ(new A.DY(new A.a4y(r),p,!0,!0,!0,s),B.o2,B.an,!1,s,s,B.mA,!1,s,s,p,B.a2,s,s,B.K,B.aA,s)}return A.Dm(q,p,s,new A.Nt(B.oG,new A.a4z(this,a,b),B.Xs,s))},
 ala(a,b){var s=null
@@ -99233,11 +99233,11 @@ B.co=new A.pM(3,"experimentalWebParagraph")
 B.CX=new A.ug(null,null,null,null,null,null,null)
 B.CY=new A.zl(null,null,null,null,null,null)
 B.ng=new A.uh(null)
+B.Vt=new A.eM("Design your ideal day \u2014 v2 update test",null,null,null,null,null,null,null,null,null)
+B.CZ=new A.jn(B.S,null,null,B.Vt,null)
 B.YP=new A.anH(0,"material")
 B.D3=new A.zp(null)
-B.CZ=new A.jn(B.S,null,null,B.D3,null)
-B.Vt=new A.eM("Design your ideal day",null,null,null,null,null,null,null,null,null)
-B.D_=new A.jn(B.S,null,null,B.Vt,null)
+B.D_=new A.jn(B.S,null,null,B.D3,null)
 B.Vo=new A.eM("Settings coming soon",null,null,null,null,null,null,null,null,null)
 B.D0=new A.jn(B.S,null,null,B.Vo,null)
 B.D1=new A.uj(null,null,null,null,null,null,null,null,null)
