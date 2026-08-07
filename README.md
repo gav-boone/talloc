@@ -13,67 +13,44 @@ Just like a bank account, you have a finite balance of time each day. Talloc hel
 - **Goals** — Set daily/weekly targets (min/max per category)
 - **Balance** — See the gap between intention and reality
 
-## Platform
-
-Talloc is a **Progressive Web App (PWA)** hosted on GitHub Pages. It works on any device with a modern browser.
-
-| Platform | How to use |
-|----------|-----------|
-| **iPhone** | Open in Safari → "Add to Home Screen" → runs like a native app |
-| **Android** | Open in Chrome → "Install app" prompt |
-| **Desktop** | Open in any browser, or install as a desktop app via Chrome/Edge |
-
-**Live app:** [https://gav-boone.github.io/talloc/](https://gav-boone.github.io/talloc/)
-
-### PWA Features
-- Fullscreen (no browser chrome) when launched from home screen
-- Offline support — works without internet after first load
-- Local data storage — all data stays on your device
-- Auto-updates on next visit when new code is deployed
-
 ## Tech Stack
 
-- **Flutter** — UI framework (compiled to web)
-- **Dart** — application language
-- **Hive** — local storage (browser IndexedDB)
-- **Riverpod** — state management
+- **TypeScript** — application language
+- **Vite** — build tool and dev server
+- **localStorage** — client-side persistence
+- **PWA** — installable, offline-capable
 - **GitHub Pages** — free static hosting
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (3.x+)
+- [Node.js](https://nodejs.org/) (18+)
 
 ### Run locally
 
 ```bash
-# Clone the repo
-git clone https://github.com/gav-boone/talloc.git
-cd talloc
-
-# Get dependencies
-flutter pub get
-
-# Run in Chrome
-flutter run -d chrome
+npm install
+npm run dev
 ```
 
-### Deploy
+### Build for production
 
 ```bash
-# Build for web
-flutter build web --release --base-href "/talloc/"
-
-# Deploy to GitHub Pages (pushes to gh-pages branch)
-# See IMPLEMENTATION_GUIDE.md for full deployment steps
+npm run build
 ```
 
-## Project Status
+Output goes to `dist/`.
 
-🚧 **In development** — Learning project for Flutter/web development.
+## Platform
 
-See [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) for the full build plan.
+Talloc is a **Progressive Web App (PWA)** hosted on GitHub Pages.
+
+| Platform | How to use |
+|----------|-----------|
+| **iPhone** | Open in Safari → "Add to Home Screen" |
+| **Android** | Open in Chrome → "Install app" prompt |
+| **Desktop** | Open in any browser, or install via Chrome/Edge |
 
 ## License
 

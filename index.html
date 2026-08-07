@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>Talloc — Track time like money</title>
+  <link rel="manifest" href="/talloc/manifest.json" />
+  <link rel="icon" href="/talloc/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <nav id="main-nav">
+      <button class="nav-btn active" data-view="log">Log</button>
+      <button class="nav-btn" data-view="categories">Categories</button>
+      <button class="nav-btn" data-view="budgets">Budgets</button>
+      <button class="nav-btn" data-view="goals">Goals</button>
+      <button class="nav-btn" data-view="balance">Balance</button>
+    </nav>
+    <main id="view-container"></main>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
