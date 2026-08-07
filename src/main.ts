@@ -1,17 +1,18 @@
 import { renderLogView } from './views/log';
-import { renderCategoriesView } from './views/categories';
 import { renderBudgetsView } from './views/budgets';
 import { renderGoalsView } from './views/goals';
 import { renderBalanceView } from './views/balance';
+import { renderSettingsView } from './views/settings';
+import { initKeyboardHandling } from './keyboard';
 
-type ViewName = 'log' | 'categories' | 'budgets' | 'goals' | 'balance';
+type ViewName = 'log' | 'budgets' | 'goals' | 'balance' | 'settings';
 
 const views: Record<ViewName, (container: HTMLElement) => void> = {
   log: renderLogView,
-  categories: renderCategoriesView,
   budgets: renderBudgetsView,
   goals: renderGoalsView,
   balance: renderBalanceView,
+  settings: renderSettingsView,
 };
 
 let currentView: ViewName = 'log';
@@ -65,4 +66,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+initKeyboardHandling();
 init();

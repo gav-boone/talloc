@@ -1,7 +1,7 @@
-import { Category, TimeTransaction, Goal, Budget } from './models';
+import { Tag, TimeTransaction, Goal, Budget } from './models';
 
 const KEYS = {
-  categories: 'talloc_categories',
+  tags: 'talloc_tags',
   transactions: 'talloc_transactions',
   goals: 'talloc_goals',
   budgets: 'talloc_budgets',
@@ -16,28 +16,28 @@ function save<T>(key: string, data: T[]): void {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-// Categories
-export function getCategories(): Category[] {
-  return load<Category>(KEYS.categories);
+// Tags
+export function getTags(): Tag[] {
+  return load<Tag>(KEYS.tags);
 }
 
-export function saveCategories(cats: Category[]): void {
-  save(KEYS.categories, cats);
+export function saveTags(tags: Tag[]): void {
+  save(KEYS.tags, tags);
 }
 
-export function addCategory(cat: Category): void {
-  const cats = getCategories();
-  cats.push(cat);
-  saveCategories(cats);
+export function addTag(tag: Tag): void {
+  const tags = getTags();
+  tags.push(tag);
+  saveTags(tags);
 }
 
-export function updateCategory(cat: Category): void {
-  const cats = getCategories().map(c => c.id === cat.id ? cat : c);
-  saveCategories(cats);
+export function updateTag(tag: Tag): void {
+  const tags = getTags().map(t => t.id === tag.id ? tag : t);
+  saveTags(tags);
 }
 
-export function deleteCategory(id: string): void {
-  saveCategories(getCategories().filter(c => c.id !== id));
+export function deleteTag(id: string): void {
+  saveTags(getTags().filter(t => t.id !== id));
 }
 
 // Transactions

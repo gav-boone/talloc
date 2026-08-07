@@ -1,28 +1,29 @@
-export interface Category {
+export interface Tag {
   id: string;
   name: string;
   colorValue: number;
-  isArchived: boolean;
 }
 
 export interface TimeTransaction {
   id: string;
-  startTime: string; // ISO date string
-  blocks: number; // each block = 15 minutes
-  categoryId: string;
+  date: string; // ISO date (YYYY-MM-DD)
+  endTime: string; // HH:MM (24h format) — end time of this entry
+  tags: string[]; // tag IDs (can be empty)
   note?: string;
 }
 
 export interface Goal {
   id: string;
-  categoryId: string;
-  targetBlocks: number;
+  text: string;
+  tags: string[]; // optional tag IDs
   period: 'daily' | 'weekly';
-  type: 'atLeast' | 'atMost' | 'exactly';
+  done: boolean;
 }
 
 export interface Budget {
   id: string;
-  categoryId: string;
-  blocksPerDay: number;
+  day: number; // 0=Monday, 1=Tuesday, ..., 6=Sunday
+  endTime: string; // HH:MM — end time of this planned block
+  tags: string[]; // optional tag IDs
+  note?: string;
 }
