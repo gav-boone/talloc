@@ -799,10 +799,12 @@ body {
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 15vh;
   z-index: 200;
   backdrop-filter: blur(4px);
+  overflow-y: auto;
 }
 
 .entry-form {
@@ -812,6 +814,7 @@ body {
   width: 320px;
   max-width: 90vw;
   position: relative;
+  margin-bottom: 40vh;
 }
 
 .form-close {
