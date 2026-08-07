@@ -1,14 +1,6 @@
-const CACHE_NAME = 'talloc-v1';
-const ASSETS = [
-  '/talloc/',
-  '/talloc/index.html',
-  '/talloc/manifest.json',
-];
+const CACHE_NAME = 'talloc-v2';
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
   self.skipWaiting();
 });
 
@@ -23,16 +15,18 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      const fetchPromise = fetch(event.request).then(response => {
+    fetch(event.request)
+      .then(response => {
+        // Cache successful responses for offline use
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => cached);
-
-      return cached || fetchPromise;
-    })
+      })
+      .catch(() => {
+        // Offline — serve from cache
+        return caches.match(event.request);
+      })
   );
 });
