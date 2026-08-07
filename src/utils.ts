@@ -41,6 +41,7 @@ export function timeToMinutes(time: string): number {
 
 /** Convert total minutes since midnight to HH:MM */
 export function minutesToTime(mins: number): string {
+  if (mins >= 1440) return '24:00';
   const h = Math.floor(mins / 60) % 24;
   const m = mins % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
@@ -58,6 +59,7 @@ export function blocksBetween(startTime: string, endTime: string): number {
 /** Format HH:MM for display (12h) */
 export function formatTime12(time: string): string {
   const [h, m] = time.split(':').map(Number);
+  if (h === 24) return '12:00am';
   const period = h >= 12 ? 'pm' : 'am';
   const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
   return `${hour12}:${String(m).padStart(2, '0')}${period}`;

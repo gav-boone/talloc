@@ -36,7 +36,8 @@ function getDaysInMonth(year: number, month: number): number {
 }
 
 function getFirstDayOfWeek(year: number, month: number): number {
-  return new Date(year, month, 1).getDay();
+  const day = new Date(year, month, 1).getDay();
+  return day === 0 ? 6 : day - 1; // Monday = 0
 }
 
 /** Format minutes as "12 AM", "1 PM", etc. */
@@ -80,7 +81,7 @@ export function renderLogView(container: HTMLElement): void {
             <button class="nav-arrow" id="picker-next-month">›</button>
           </div>
           <div class="picker-weekdays">
-            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
           </div>
           <div class="picker-grid" id="picker-grid"></div>
         </div>
@@ -321,7 +322,21 @@ function bindEditForm(container: HTMLElement): void {
   // Save
   container.querySelector('#edit-save')!.addEventListener('click', () => {
     const note = (container.querySelector('#edit-note') as HTMLInputElement).value || undefined;
-    updateTransaction({ ...editingTx, tags: Array.from(editTagIds), note });
+    const tags = Array.from(editTagIds);
+
+    // Compute blocks for this transaction
+    const dayTxs = getDayTransactions(selectedDate);
+    const txIdx = dayTxs.findIndex(t => t.id === editingTx.id);
+    const startMins = txIdx === 0 ? 0 : timeToMinutes(dayTxs[txIdx - 1].endTime);
+    const endMins = timeToMinutes(editingTx.endTime);
+    const numBlocks = Math.round((endMins - startMins) / 15);
+
+    if (tags.length > numBlocks) {
+      alert(`Too many tags: ${tags.length} tags for ${numBlocks} block${numBlocks > 1 ? 's' : ''}. Max 1 tag per 15-min block.`);
+      return;
+    }
+
+    updateTransaction({ ...editingTx, tags, note });
     editingTxId = null;
     refreshDayContent(container);
   });
@@ -334,7 +349,7 @@ function bindEditForm(container: HTMLElement): void {
 
   // Delete
   container.querySelector('#edit-delete')!.addEventListener('click', () => {
-    if (confirm('Delete this time entry?')) {
+    if (editingTx) {
       deleteTransaction(editingTx.id);
       editingTxId = null;
       refreshDayContent(container);
@@ -369,12 +384,20 @@ function bindEntryForm(container: HTMLElement): void {
   container.querySelector('#entry-confirm')!.addEventListener('click', () => {
     if (pendingEndSlot === null) return;
     const note = (container.querySelector('#log-note') as HTMLInputElement).value || undefined;
+    const nextStartMins = getNextStartMinutes(selectedDate);
+    const numBlocks = Math.round((pendingEndSlot - nextStartMins) / 15);
+    const tags = Array.from(selectedTagIds);
+
+    if (tags.length > numBlocks) {
+      alert(`Too many tags: ${tags.length} tags for ${numBlocks} block${numBlocks > 1 ? 's' : ''}. Max 1 tag per 15-min block.`);
+      return;
+    }
 
     const tx: TimeTransaction = {
       id: generateId(),
       date: selectedDate,
       endTime: minutesToTime(pendingEndSlot),
-      tags: Array.from(selectedTagIds),
+      tags,
       note,
     };
 

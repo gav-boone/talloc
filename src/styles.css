@@ -21,6 +21,13 @@
 
 html, body {
   overscroll-behavior-x: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body {
@@ -77,6 +84,9 @@ body {
 /* View sections */
 .view-section {
   padding: 16px;
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+  min-height: calc(100vh - var(--nav-height));
 }
 
 .view-section h1 {
@@ -228,12 +238,13 @@ body {
 .day-tabs {
   display: flex;
   gap: 4px;
-  padding: 8px 0;
+  padding: 12px 0;
   overflow-x: auto;
   position: sticky;
   top: 0;
   background: var(--bg);
   z-index: 10;
+  justify-content: center;
 }
 
 .day-tab {
@@ -241,7 +252,7 @@ body {
   border: none;
   color: var(--text-muted);
   font-size: 0.8rem;
-  padding: 6px 12px;
+  padding: 9px 12px;
   border-radius: 16px;
   cursor: pointer;
   white-space: nowrap;
@@ -429,6 +440,40 @@ body {
 
 
 /* Balance */
+.balance-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
+  flex-wrap: nowrap;
+}
+
+.balance-nav .nav-arrow {
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.balance-nav-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-align: center;
+  white-space: nowrap;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  transition: background 0.2s;
+}
+
+.balance-nav-label:hover {
+  background: var(--surface);
+}
+
 .balance-summary {
   display: flex;
   gap: 12px;
@@ -508,8 +553,8 @@ body {
   border: none;
   color: var(--text);
   font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -526,7 +571,7 @@ body {
   background: none;
   border: none;
   color: var(--primary);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   padding: 8px 16px;
@@ -1004,4 +1049,9 @@ body {
 
 .picker-day.selected.today {
   border-color: transparent;
+}
+
+.picker-day.week-highlight {
+  background: rgba(79, 195, 247, 0.15);
+  border-radius: 4px;
 }

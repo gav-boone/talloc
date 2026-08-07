@@ -155,14 +155,6 @@ export function renderBudgetsView(container: HTMLElement): void {
     </div>
   ` : '';
 
-  // Summary
-  const summaryHtml = dayBudgets.length > 0 ? `
-    <div class="day-summary">
-      <span class="summary">Planned: <strong>${formatDuration(nextStartMins)}</strong></span>
-      <button class="btn-icon btn-undo" id="budget-undo-last" aria-label="Remove last entry">↩</button>
-    </div>
-  ` : '';
-
   container.innerHTML = `
     <section class="view-section log-view">
       <div class="day-tabs">
@@ -171,7 +163,6 @@ export function renderBudgetsView(container: HTMLElement): void {
         `).join('')}
       </div>
       <div id="budget-day-content" class="day-content">
-        ${summaryHtml}
         <div class="time-grid" id="budget-time-grid">
           <div class="cal-gutter-layer">${gutterHtml}</div>
           <div class="cal-blocks-layer">${blocksHtml}</div>
@@ -188,7 +179,6 @@ export function renderBudgetsView(container: HTMLElement): void {
   bindFilledClicks(container);
   bindAddForm(container);
   bindEditForm(container);
-  bindUndoButton(container);
 }
 
 function bindDayTabs(container: HTMLElement): void {
@@ -330,11 +320,9 @@ function bindEditForm(container: HTMLElement): void {
   });
 
   container.querySelector('#budget-edit-delete')!.addEventListener('click', () => {
-    if (confirm('Remove this planned block?')) {
-      deleteBudget(editingBudget.id);
-      editingBudgetId = null;
-      renderBudgetsView(container);
-    }
+    deleteBudget(editingBudget.id);
+    editingBudgetId = null;
+    renderBudgetsView(container);
   });
 
   overlay.addEventListener('click', (e) => {
@@ -345,14 +333,4 @@ function bindEditForm(container: HTMLElement): void {
   });
 }
 
-function bindUndoButton(container: HTMLElement): void {
-  const btn = container.querySelector('#budget-undo-last');
-  if (!btn) return;
-  btn.addEventListener('click', () => {
-    const entries = getDayBudgets(selectedDay);
-    if (entries.length > 0) {
-      deleteBudget(entries[entries.length - 1].id);
-      renderBudgetsView(container);
-    }
-  });
-}
+

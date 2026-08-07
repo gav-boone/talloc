@@ -41,7 +41,11 @@ export function renderSettingsView(container: HTMLElement): void {
 
       <h2>Data</h2>
       <div class="form-card">
-        <button id="export-btn" class="btn btn-secondary">Export Data</button>
+        <div class="form-group">
+          <label for="export-email">Email export to</label>
+          <input type="email" id="export-email" placeholder="your@email.com" />
+        </div>
+        <button id="export-btn" class="btn btn-secondary">Send Export</button>
         <button id="clear-btn" class="btn btn-danger" style="margin-top:8px">Clear All Data</button>
       </div>
     </section>
@@ -95,19 +99,37 @@ export function renderSettingsView(container: HTMLElement): void {
 
   // Export
   container.querySelector('#export-btn')!.addEventListener('click', () => {
+    const emailInput = container.querySelector('#export-email') as HTMLInputElement;
+    const email = emailInput.value.trim();
+    if (!email || !emailInput.validity.valid) {
+      emailInput.reportValidity();
+      return;
+    }
+
     const data = {
       tags: localStorage.getItem('talloc_tags'),
       transactions: localStorage.getItem('talloc_transactions'),
       goals: localStorage.getItem('talloc_goals'),
       budgets: localStorage.getItem('talloc_budgets'),
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `talloc-export-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const jsonStr = JSON.stringify(data, null, 2);
+    const subject = `Talloc Export — ${new Date().toISOString().slice(0, 10)}`;
+
+    // Try Web Share API with file (mobile)
+    if (navigator.share && navigator.canShare) {
+      const file = new File([jsonStr], `talloc-export-${new Date().toISOString().slice(0, 10)}.json`, { type: 'application/json' });
+      const shareData = { title: subject, files: [file] };
+      if (navigator.canShare(shareData)) {
+        navigator.share(shareData).catch(() => {
+          // Fallback to mailto
+          openMailto(email, subject, jsonStr);
+        });
+        return;
+      }
+    }
+
+    // Fallback: mailto
+    openMailto(email, subject, jsonStr);
   });
 
   // Clear
@@ -120,4 +142,13 @@ export function renderSettingsView(container: HTMLElement): void {
       renderSettingsView(container);
     }
   });
+}
+
+
+function openMailto(email: string, subject: string, body: string): void {
+  // mailto has length limits, truncate if needed
+  const maxBody = 1500;
+  const truncatedBody = body.length > maxBody ? body.slice(0, maxBody) + '\n...(truncated, use Share for full data)' : body;
+  const mailto = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(truncatedBody)}`;
+  window.location.href = mailto;
 }
