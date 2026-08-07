@@ -1,28 +1,25 @@
 /**
- * Mobile keyboard handling:
- * - Scrolls focused inputs into view when keyboard opens
- * - Adjusts overlay forms so they remain visible above the keyboard
- * - Prevents iOS from zooming on input focus (font-size < 16px fix)
+ * Mobile keyboard handling for iOS:
+ * - Repositions overlay forms to stay within the visual viewport when keyboard opens
+ * - Prevents page from scrolling away from focused input
  */
 
 export function initKeyboardHandling(): void {
-  // Scroll focused input into view with a delay (keyboard animation)
+  if (!window.visualViewport) return;
+
+  window.visualViewport.addEventListener('resize', onViewportResize);
+  window.visualViewport.addEventListener('scroll', onViewportScroll);
+
+  // On focus, ensure the overlay stays positioned correctly after keyboard animates
   document.addEventListener('focusin', (e) => {
     const target = e.target as HTMLElement;
     if (!isInput(target)) return;
 
-    // Small delay to let keyboard animation finish
-    setTimeout(() => {
-      scrollInputIntoView(target);
-    }, 300);
+    // Multiple delays to catch keyboard animation at different stages
+    setTimeout(repositionOverlays, 100);
+    setTimeout(repositionOverlays, 300);
+    setTimeout(repositionOverlays, 500);
   });
-
-  // Use visualViewport API to detect keyboard open/close
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      adjustOverlaysForKeyboard();
-    });
-  }
 }
 
 function isInput(el: HTMLElement): boolean {
@@ -30,40 +27,26 @@ function isInput(el: HTMLElement): boolean {
   return tag === 'input' || tag === 'textarea' || tag === 'select';
 }
 
-function scrollInputIntoView(el: HTMLElement): void {
-  // Check if element is inside an overlay (fixed positioning)
-  const overlay = el.closest('.entry-form-overlay, .date-picker-overlay');
-  if (overlay) {
-    // For overlay forms, adjust the form position
-    const form = overlay.querySelector('.entry-form, .date-picker') as HTMLElement;
-    if (form && window.visualViewport) {
-      const keyboardHeight = window.innerHeight - window.visualViewport.height;
-      if (keyboardHeight > 0) {
-        form.style.transform = `translateY(-${keyboardHeight / 2}px)`;
-      }
-    }
-  } else {
-    // For inline inputs, scroll into view
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
+function onViewportResize(): void {
+  repositionOverlays();
 }
 
-function adjustOverlaysForKeyboard(): void {
-  if (!window.visualViewport) return;
+function onViewportScroll(): void {
+  repositionOverlays();
+}
 
-  const keyboardHeight = window.innerHeight - window.visualViewport.height;
-  const overlays = document.querySelectorAll('.entry-form-overlay:not(.hidden)');
+function repositionOverlays(): void {
+  const vv = window.visualViewport;
+  if (!vv) return;
 
+  const overlays = document.querySelectorAll('.entry-form-overlay, .date-picker-overlay:not(.hidden)');
   overlays.forEach(overlay => {
-    const form = overlay.querySelector('.entry-form, .date-picker') as HTMLElement;
-    if (!form) return;
-
-    if (keyboardHeight > 50) {
-      // Keyboard is open — shift form up
-      form.style.transform = `translateY(-${keyboardHeight / 2}px)`;
-    } else {
-      // Keyboard closed — reset
-      form.style.transform = '';
-    }
+    const el = overlay as HTMLElement;
+    // Position the overlay to fill the visual viewport, not the layout viewport
+    el.style.position = 'fixed';
+    el.style.top = `${vv.offsetTop}px`;
+    el.style.left = `${vv.offsetLeft}px`;
+    el.style.width = `${vv.width}px`;
+    el.style.height = `${vv.height}px`;
   });
 }

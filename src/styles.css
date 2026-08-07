@@ -812,7 +812,6 @@ body {
   width: 320px;
   max-width: 90vw;
   position: relative;
-  transition: transform 0.2s ease;
 }
 
 .form-close {
