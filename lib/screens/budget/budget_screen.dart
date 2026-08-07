@@ -8,7 +8,7 @@ class BudgetScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Budget')),
       body: const Center(
-        child: Text('Design your ideal day'),
+        child: Text('Design your ideal day — v2 update test'),
       ),
     );
   }
