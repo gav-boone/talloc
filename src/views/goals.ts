@@ -20,7 +20,6 @@ export function renderGoalsView(container: HTMLElement): void {
 
   container.innerHTML = `
     <section class="view-section">
-      <h1>Goals</h1>
 
       <div class="goals-section">
         <div class="goals-section-header">

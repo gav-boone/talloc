@@ -250,10 +250,17 @@ function renderDayContent(): string {
     }
   }).join('');
 
+  // Now bar (only for today)
+  const now = new Date();
+  const currentMins = now.getHours() * 60 + now.getMinutes();
+  const isToday = selectedDate === todayISO();
+  const nowBarHtml = isToday ? `<div class="cal-now-bar" style="top:${(currentMins / (24 * 60)) * (96 * 28)}px"></div>` : '';
+
   const gridHtml = `
     <div class="time-grid" id="time-grid">
       <div class="cal-gutter-layer">${gutterHtml}</div>
       <div class="cal-blocks-layer">${blocksHtml}</div>
+      ${nowBarHtml}
     </div>
   `;
 

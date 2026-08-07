@@ -9,7 +9,6 @@ export function renderSettingsView(container: HTMLElement): void {
 
   container.innerHTML = `
     <section class="view-section">
-      <h1>Settings</h1>
       
       <h2>Tags</h2>
       <p class="subtitle">Manage your tags for categorizing time entries.</p>

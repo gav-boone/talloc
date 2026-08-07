@@ -277,11 +277,20 @@ function bindAddForm(container: HTMLElement): void {
   container.querySelector('#budget-add-save')!.addEventListener('click', () => {
     if (pendingEndSlot === null) return;
     const note = (container.querySelector('#budget-add-note') as HTMLInputElement).value || undefined;
+    const nextStartMins = getNextStartMinutes(selectedDay);
+    const numBlocks = Math.round((pendingEndSlot - nextStartMins) / 15);
+    const tags = Array.from(selectedTagIds);
+
+    if (tags.length > numBlocks) {
+      alert(`Too many tags: ${tags.length} tags for ${numBlocks} block${numBlocks > 1 ? 's' : ''}. Max 1 tag per 15-min block.`);
+      return;
+    }
+
     const budget: Budget = {
       id: generateId(),
       day: selectedDay,
       endTime: minutesToTime(pendingEndSlot),
-      tags: Array.from(selectedTagIds),
+      tags,
       note,
     };
     addBudget(budget);
@@ -314,7 +323,21 @@ function bindEditForm(container: HTMLElement): void {
 
   container.querySelector('#budget-edit-save')!.addEventListener('click', () => {
     const note = (container.querySelector('#budget-edit-note') as HTMLInputElement).value || undefined;
-    updateBudget({ ...editingBudget, tags: Array.from(editTagIds), note });
+    const tags = Array.from(editTagIds);
+
+    // Compute blocks for this budget entry
+    const dayBudgets = getDayBudgets(selectedDay);
+    const bIdx = dayBudgets.findIndex(b => b.id === editingBudget.id);
+    const startMins = bIdx === 0 ? 0 : timeToMinutes(dayBudgets[bIdx - 1].endTime);
+    const endMins = timeToMinutes(editingBudget.endTime);
+    const numBlocks = Math.round((endMins - startMins) / 15);
+
+    if (tags.length > numBlocks) {
+      alert(`Too many tags: ${tags.length} tags for ${numBlocks} block${numBlocks > 1 ? 's' : ''}. Max 1 tag per 15-min block.`);
+      return;
+    }
+
+    updateBudget({ ...editingBudget, tags, note });
     editingBudgetId = null;
     renderBudgetsView(container);
   });

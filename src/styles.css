@@ -68,17 +68,18 @@ body {
   padding: 8px 12px;
   cursor: pointer;
   border-radius: var(--radius);
-  transition: all 0.2s;
+  transition: color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  min-width: 52px;
+  text-align: center;
 }
 
 .nav-btn:hover {
   color: var(--text);
-  background: var(--surface-hover);
 }
 
 .nav-btn.active {
   color: var(--primary);
-  font-weight: 600;
 }
 
 /* View sections */
@@ -99,6 +100,11 @@ body {
   margin-top: 24px;
   margin-bottom: 12px;
   color: var(--text-muted);
+}
+
+.view-section .goals-section {
+  margin-top: 24px;
+  margin-bottom: 12px;
 }
 
 .subtitle {
@@ -750,6 +756,27 @@ body {
 }
 
 /* Day summary bar */
+.cal-now-bar {
+  position: absolute;
+  left: 44px;
+  right: 0;
+  height: 2px;
+  background: var(--danger);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.cal-now-bar::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
 .day-summary {
   display: flex;
   align-items: center;
