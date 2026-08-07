@@ -1,35 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <base href="/talloc/">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Track time like money. Log every 15 minutes as a transaction.">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <!-- PWA / iOS meta tags -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Talloc">
-  <meta name="theme-color" content="#1A2332">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>Talloc</title>
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <title>Talloc — Track time like money</title>
+  <link rel="manifest" href="/talloc/manifest.json" />
+  <link rel="icon" href="/talloc/favicon.svg" type="image/svg+xml" />
+  <script type="module" crossorigin src="/talloc/assets/index-BARWlhw5.js"></script>
+  <link rel="stylesheet" crossorigin href="/talloc/assets/index-DF6ft7Uj.css">
 </head>
-<body style="background-color: #1A2332; margin: 0;">
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('custom_service_worker.js');
-      });
-    }
-  </script>
-  <script src="flutter_bootstrap.js" async></script>
+<body>
+  <div id="app">
+    <nav id="main-nav">
+      <button class="nav-btn active" data-view="log">Log</button>
+      <button class="nav-btn" data-view="budgets">Budgets</button>
+      <button class="nav-btn" data-view="balance">Balance</button>
+      <button class="nav-btn" data-view="goals">Goals</button>
+      <button class="nav-btn" data-view="settings">Settings</button>
+    </nav>
+    <main id="view-container"></main>
+  </div>
 </body>
 </html>
